@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:grooot_fi_app/screens/home_screen.dart';
 import 'package:grooot_fi_app/screens/launch_screen.dart';
 
 void main() {

@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../components/custom_bottom_navigation.dart';
-import '../utility/BottomNavBarNavigationUtility.dart';
-
 class PostScreen extends StatefulWidget {
   const PostScreen({super.key});
 

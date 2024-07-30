@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../components/custom_bottom_navigation.dart';
-import '../utility/BottomNavBarNavigationUtility.dart';
-import 'home_screen.dart';
-import 'scribble_screen.dart';
-
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 

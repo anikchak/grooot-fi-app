@@ -27,19 +27,20 @@ class _LaunchScreenState extends State<LaunchScreen> {
     return Scaffold(
       body: Container(
         color: const Color(0xFFCDEB3F),
-        child: Center(
+        child: const Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                'grooot',
-                style: GoogleFonts.fredoka(
-                  textStyle: const TextStyle(
-                      fontSize: 80,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w700),
-                ),
-              ),
+              // Text(
+              //   'grooot',
+              //   style: GoogleFonts.fredoka(
+              //     textStyle: const TextStyle(
+              //         fontSize: 80,
+              //         color: Colors.black,
+              //         fontWeight: FontWeight.w700),
+              //   ),
+              // ),
+              Image(image: AssetImage('images/branding_750px.png')),
             ],
           ),
         ),

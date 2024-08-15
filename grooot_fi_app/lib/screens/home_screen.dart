@@ -15,10 +15,18 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int currentSelectedIndex = 0;
+  bool isBottomNavBarVisible = true;
   final GlobalKey<NavigatorState> reelNav = GlobalKey<NavigatorState>();
   final GlobalKey<NavigatorState> scribbleNav = GlobalKey<NavigatorState>();
   final GlobalKey<NavigatorState> postNav = GlobalKey<NavigatorState>();
   final GlobalKey<NavigatorState> profileNav = GlobalKey<NavigatorState>();
+
+  void _toggleBottomNavBarVisibility(bool isVisible) {
+    print("_toggleBottomNavBarVisibility called: $isVisible");
+    setState(() {
+      isBottomNavBarVisible = isVisible;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,16 +37,13 @@ class _HomeScreenState extends State<HomeScreen> {
         inactiveColor: const Color(0xFFCDEB3F),
         onTap: (index) {
           postNav.currentState!.popUntil((r) => r.isFirst);
-          scribbleNav.currentState!.popUntil((r) => r.isFirst);
-          reelNav.currentState!.popUntil((r) => r.isFirst);
-          profileNav.currentState!.popUntil((r) => r.isFirst);
-          // setState(() {
-          //   currentSelectedIndex = index;
-          // });
+          // scribbleNav.currentState!.popUntil((r) => r.isFirst);
+          // reelNav.currentState!.popUntil((r) => r.isFirst);
+          // profileNav.currentState!.popUntil((r) => r.isFirst);
           currentSelectedIndex = index;
         },
         backgroundColor: Theme.of(context).primaryColor,
-        height: 60,
+        height: isBottomNavBarVisible ? 60 : 0,
         items: <BottomNavigationBarItem>[
           const BottomNavigationBarItem(
             icon: Icon(
@@ -106,7 +111,11 @@ class _HomeScreenState extends State<HomeScreen> {
             return CupertinoTabView(
               navigatorKey: postNav,
               builder: (context) {
-                return const CupertinoPageScaffold(child: PostScreen());
+                return CupertinoPageScaffold(
+                  child: PostScreen(
+                    toggleBottomNavBarVisibility: _toggleBottomNavBarVisibility,
+                  ),
+                );
               },
             );
           case 3:

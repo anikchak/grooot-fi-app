@@ -1,11 +1,11 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-// ignore: unused_import
 import 'package:grooot_fi_app/screens/post_discussion_screen.dart';
 
 class PostScreen extends StatefulWidget {
-  const PostScreen({super.key});
+  final Function(bool) toggleBottomNavBarVisibility;
+  const PostScreen({super.key, required this.toggleBottomNavBarVisibility});
 
   @override
   State<PostScreen> createState() => _PostScreenState();
@@ -63,7 +63,11 @@ class _PostScreenState extends State<PostScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const PostDiscussionScreen(),
+                  builder: (context) => PostDiscussionScreen(
+                    toggleBottomNavBarVisibility: (bool) {
+                      widget.toggleBottomNavBarVisibility(bool);
+                    },
+                  ),
                 ),
               );
             } else if (action == 'reel') {

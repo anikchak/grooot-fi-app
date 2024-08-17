@@ -92,6 +92,33 @@ class _PostDiscussionScreenState extends State<PostDiscussionScreen> {
             color: Colors.white,
           ),
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 16.0, 8.0),
+            child: TextButton(
+              onPressed: () {
+                // Action for the Post button
+              },
+              style: TextButton.styleFrom(
+                backgroundColor: const Color(0xFFCDEB3F),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                minimumSize: const Size(80, 20),
+              ),
+              child: Text(
+                "Post",
+                style: GoogleFonts.roboto(
+                  textStyle: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 17,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
         bottom: const PreferredSize(
           preferredSize: Size.fromHeight(1.0),
           child: Divider(
@@ -99,7 +126,7 @@ class _PostDiscussionScreenState extends State<PostDiscussionScreen> {
             height: 1.0,
           ),
         ),
-        toolbarHeight: 40,
+        toolbarHeight: 50,
       ),
       body: SingleChildScrollView(
         child: Column(

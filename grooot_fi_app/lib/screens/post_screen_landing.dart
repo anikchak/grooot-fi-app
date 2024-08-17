@@ -29,7 +29,7 @@ class _PostScreenState extends State<PostScreen> {
             height: 1.0,
           ),
         ),
-        toolbarHeight: 40,
+        toolbarHeight: 50,
       ),
       body: Center(
         child: Column(

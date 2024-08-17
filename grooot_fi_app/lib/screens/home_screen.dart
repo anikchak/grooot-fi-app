@@ -36,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
         activeColor: const Color(0xFFCDEB3F),
         inactiveColor: const Color(0xFFCDEB3F),
         onTap: (index) {
-          postNav.currentState!.popUntil((r) => r.isFirst);
+          postNav.currentState?.popUntil((r) => r.isFirst);
           // scribbleNav.currentState!.popUntil((r) => r.isFirst);
           // reelNav.currentState!.popUntil((r) => r.isFirst);
           // profileNav.currentState!.popUntil((r) => r.isFirst);

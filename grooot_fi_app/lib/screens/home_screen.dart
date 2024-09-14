@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:grooot_fi_app/screens/post_discussion_screen.dart';
 import 'package:grooot_fi_app/screens/post_screen_landing.dart';
 import 'package:grooot_fi_app/screens/profile_screen.dart';
 import 'package:grooot_fi_app/screens/reel_screen.dart';
@@ -21,6 +22,16 @@ class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<NavigatorState> postNav = GlobalKey<NavigatorState>();
   final GlobalKey<NavigatorState> profileNav = GlobalKey<NavigatorState>();
 
+  //Post screen controllers
+  final TextEditingController _postTitleController = TextEditingController();
+
+  @override
+  void dispose() {
+    _postTitleController
+        .dispose(); // Dispose the controller when the widget is disposed
+    super.dispose();
+  }
+
   void _toggleBottomNavBarVisibility(bool isVisible) {
     print("_toggleBottomNavBarVisibility called: $isVisible");
     setState(() {
@@ -36,7 +47,12 @@ class _HomeScreenState extends State<HomeScreen> {
         activeColor: const Color(0xFFCDEB3F),
         inactiveColor: const Color(0xFFCDEB3F),
         onTap: (index) {
-          postNav.currentState?.popUntil((r) => r.isFirst);
+          // Clear the post title controller on tab change (except Post tab)
+          if (index != 1) {
+            postNav.currentState?.popUntil((r) => r.isFirst);
+            _postTitleController
+                .clear(); // Clear text field only when switching away from Post
+          }
           // scribbleNav.currentState!.popUntil((r) => r.isFirst);
           // reelNav.currentState!.popUntil((r) => r.isFirst);
           // profileNav.currentState!.popUntil((r) => r.isFirst);
@@ -56,17 +72,17 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             label: 'Home',
           ),
-          const BottomNavigationBarItem(
-            icon: Icon(
-              Icons.chat_outlined,
-              size: 32,
-            ),
-            activeIcon: Icon(
-              Icons.chat_rounded,
-              size: 32,
-            ),
-            label: 'Scribble',
-          ),
+          // const BottomNavigationBarItem(
+          //   icon: Icon(
+          //     Icons.chat_outlined,
+          //     size: 32,
+          //   ),
+          //   activeIcon: Icon(
+          //     Icons.chat_rounded,
+          //     size: 32,
+          //   ),
+          //   label: 'Scribble',
+          // ),
           const BottomNavigationBarItem(
             icon: Icon(
               Icons.add_circle_outline_rounded,
@@ -93,32 +109,33 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       tabBuilder: (context, index) {
         switch (index) {
+          // case 0:
+          //   return CupertinoTabView(
+          //     navigatorKey: reelNav,
+          //     builder: (context) {
+          //       return const CupertinoPageScaffold(child: ReelScreen());
+          //     },
+          //   );
           case 0:
-            return CupertinoTabView(
-              navigatorKey: reelNav,
-              builder: (context) {
-                return const CupertinoPageScaffold(child: ReelScreen());
-              },
-            );
-          case 1:
             return CupertinoTabView(
               navigatorKey: scribbleNav,
               builder: (context) {
                 return const CupertinoPageScaffold(child: ScribbleScreen());
               },
             );
-          case 2:
+          case 1:
             return CupertinoTabView(
               navigatorKey: postNav,
               builder: (context) {
                 return CupertinoPageScaffold(
-                  child: PostScreen(
+                  child: PostDiscussionScreen(
+                    postTitleController: _postTitleController,
                     toggleBottomNavBarVisibility: _toggleBottomNavBarVisibility,
                   ),
                 );
               },
             );
-          case 3:
+          case 2:
             return CupertinoTabView(
               navigatorKey: profileNav,
               builder: (context) {
@@ -127,8 +144,9 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           default:
             return CupertinoTabView(
+              navigatorKey: scribbleNav,
               builder: (context) {
-                return const CupertinoPageScaffold(child: ReelScreen());
+                return const CupertinoPageScaffold(child: ScribbleScreen());
               },
             );
         }

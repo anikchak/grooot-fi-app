@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:grooot_fi_app/components/choose_post_category.dart';
 import 'package:grooot_fi_app/components/post_discussion_describe_post_textbox.dart';
 import 'package:grooot_fi_app/components/post_discussion_title_textbox.dart';
 
 class PostDiscussionScreen extends StatefulWidget {
   final Function(bool) toggleBottomNavBarVisibility;
+  final TextEditingController postTitleController;
   const PostDiscussionScreen(
-      {super.key, required this.toggleBottomNavBarVisibility});
+      {super.key,
+      required this.toggleBottomNavBarVisibility,
+      required this.postTitleController});
 
   @override
   State<PostDiscussionScreen> createState() => _PostDiscussionScreenState();
 }
 
 class _PostDiscussionScreenState extends State<PostDiscussionScreen> {
-  int currentBottomNavPageIndex = 2;
-
+  String? selectedImageUrl;
+  String? selectedTitle;
   void _showBottomSheet(BuildContext context) {
     widget.toggleBottomNavBarVisibility(false);
 
@@ -23,49 +27,14 @@ class _PostDiscussionScreenState extends State<PostDiscussionScreen> {
       isScrollControlled: true,
       barrierColor: const Color(0xFF2C2C2C).withOpacity(0.9),
       builder: (context) {
-        return Container(
-          height: MediaQuery.of(context).size.height * 0.85,
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            ),
-          ),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const SizedBox(
-                        width: 24), // Placeholder to center the title
-                    Text(
-                      "Choose a community",
-                      style: GoogleFonts.roboto(
-                        textStyle: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(
-                        Icons.close,
-                        color: Colors.black,
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              // Add more content to the bottom sheet here if needed
-            ],
-          ),
+        return ChoosePostCategory(
+          onOptionSelected: (String imageUrl, String title) {
+            setState(() {
+              selectedImageUrl = imageUrl;
+              selectedTitle = title;
+            });
+            Navigator.of(context).pop();
+          },
         );
       },
     ).whenComplete(() {
@@ -83,15 +52,15 @@ class _PostDiscussionScreenState extends State<PostDiscussionScreen> {
             textStyle: const TextStyle(color: Colors.white),
           ),
         ),
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: Colors.white,
-          ),
-        ),
+        // leading: IconButton(
+        //   onPressed: () {
+        //     Navigator.pop(context);
+        //   },
+        //   icon: const Icon(
+        //     Icons.arrow_back_ios_new_rounded,
+        //     color: Colors.white,
+        //   ),
+        // ),
         actions: [
           Padding(
             padding: const EdgeInsets.fromLTRB(0, 0, 16.0, 8.0),
@@ -149,26 +118,58 @@ class _PostDiscussionScreenState extends State<PostDiscussionScreen> {
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Text(
-                        "Choose a community",
-                        style: GoogleFonts.roboto(
-                          textStyle: const TextStyle(
-                              color: Colors.white, fontSize: 17),
+                      if (selectedImageUrl != null &&
+                          selectedTitle != null) ...[
+                        ClipOval(
+                          child: Image.network(
+                            selectedImageUrl!,
+                            width: 40,
+                            height: 40,
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                      ),
-                      const Icon(
-                        Icons.keyboard_arrow_down_rounded,
-                        size: 30,
-                      ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          // To ensure the title takes up the remaining space and aligns left
+                          child: Text(
+                            selectedTitle!,
+                            style: GoogleFonts.roboto(
+                              textStyle: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                              ),
+                            ),
+                            textAlign: TextAlign.start,
+                          ),
+                        ),
+                        const Spacer(),
+                        const Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          size: 30,
+                        ),
+                      ] else ...[
+                        Text(
+                          "Choose a community",
+                          style: GoogleFonts.roboto(
+                            textStyle: const TextStyle(
+                                color: Colors.white, fontSize: 17),
+                          ),
+                        ),
+                        const Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          size: 30,
+                        ),
+                      ],
                     ],
                   ),
                 ),
               ),
             ),
             const SizedBox(height: 20),
-            const PostDiscussionTitleTextbox(),
+            PostDiscussionTitleTextbox(
+                postTitleController: widget.postTitleController),
             const SizedBox(height: 20),
             const PostDiscussionDescribePostTextbox(),
           ],

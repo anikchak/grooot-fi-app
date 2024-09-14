@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class PostDiscussionTitleTextbox extends StatefulWidget {
-  const PostDiscussionTitleTextbox({super.key});
+  final TextEditingController postTitleController;
+  const PostDiscussionTitleTextbox(
+      {super.key, required this.postTitleController});
 
   @override
   State<PostDiscussionTitleTextbox> createState() =>
@@ -11,16 +13,14 @@ class PostDiscussionTitleTextbox extends StatefulWidget {
 
 class _PostDiscussionTitleTextboxState
     extends State<PostDiscussionTitleTextbox> {
-  final TextEditingController _controller = TextEditingController();
-  int _charCount = 0;
+  late TextEditingController _controller;
 
   @override
   void initState() {
     super.initState();
+    _controller = widget.postTitleController;
     _controller.addListener(() {
-      setState(() {
-        _charCount = _controller.text.length;
-      });
+      setState(() {});
     });
   }
 

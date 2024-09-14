@@ -60,16 +60,16 @@ class _PostScreenState extends State<PostScreen> {
             // Define your button action here
             if (action == 'discussion') {
               print('discussion pressed with push to discussion page');
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => PostDiscussionScreen(
-                    toggleBottomNavBarVisibility: (bool) {
-                      widget.toggleBottomNavBarVisibility(bool);
-                    },
-                  ),
-                ),
-              );
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => PostDiscussionScreen(
+              //       toggleBottomNavBarVisibility: (bool) {
+              //         widget.toggleBottomNavBarVisibility(bool);
+              //       },
+              //     ),
+              //   ),
+              // );
             } else if (action == 'reel') {
               print('reel pressed');
             }

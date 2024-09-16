@@ -1,7 +1,7 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:grooot_fi_app/screens/post_discussion_screen.dart';
+import 'package:grooot_fi_app/screens/post_discussion_screen1.dart';
 
 class PostScreen extends StatefulWidget {
   final Function(bool) toggleBottomNavBarVisibility;

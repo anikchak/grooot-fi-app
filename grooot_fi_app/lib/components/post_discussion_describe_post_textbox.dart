@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class PostDiscussionDescribePostTextbox extends StatefulWidget {
-  const PostDiscussionDescribePostTextbox({super.key});
+  final TextEditingController postDescriptionController;
+
+  const PostDiscussionDescribePostTextbox(
+      {super.key, required this.postDescriptionController});
 
   @override
   State<PostDiscussionDescribePostTextbox> createState() =>
@@ -11,6 +14,13 @@ class PostDiscussionDescribePostTextbox extends StatefulWidget {
 
 class _PostDiscussionDescribePostTextboxState
     extends State<PostDiscussionDescribePostTextbox> {
+  late TextEditingController _controller;
+  @override
+  void initState() {
+    super.initState();
+    _controller = widget.postDescriptionController;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -18,6 +28,7 @@ class _PostDiscussionDescribePostTextboxState
       child: Column(
         children: [
           TextField(
+            controller: _controller,
             maxLines: 10, // Allows the text field to grow as the user types
             keyboardType: TextInputType.multiline,
             decoration: InputDecoration(

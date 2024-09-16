@@ -2,9 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:grooot_fi_app/screens/post_discussion_screen.dart';
-import 'package:grooot_fi_app/screens/post_screen_landing.dart';
+import 'package:grooot_fi_app/screens/post_discussion_screen1.dart';
 import 'package:grooot_fi_app/screens/profile_screen.dart';
-import 'package:grooot_fi_app/screens/reel_screen.dart';
 import 'package:grooot_fi_app/screens/scribble_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -22,13 +21,26 @@ class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<NavigatorState> postNav = GlobalKey<NavigatorState>();
   final GlobalKey<NavigatorState> profileNav = GlobalKey<NavigatorState>();
 
-  //Post screen controllers
-  final TextEditingController _postTitleController = TextEditingController();
+  // //Post screen controllers
+  // final TextEditingController _postTitleController = TextEditingController();
+  // final TextEditingController _postDescriptionController =
+  //     TextEditingController();
+
+  // ValueNotifier to manage post title, description, and selected category
+  final ValueNotifier<Map<String, dynamic>> postDataNotifier =
+      ValueNotifier<Map<String, dynamic>>({
+    'postTitle': '',
+    'postDescription': '',
+    'selectedImageUrl': null,
+    'selectedTitle': null,
+  });
 
   @override
   void dispose() {
-    _postTitleController
-        .dispose(); // Dispose the controller when the widget is disposed
+    // _postTitleController
+    //     .dispose(); // Dispose the controller when the widget is disposed
+    // _postDescriptionController.dispose();
+    postDataNotifier.dispose();
     super.dispose();
   }
 
@@ -37,6 +49,15 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       isBottomNavBarVisible = isVisible;
     });
+  }
+
+  void _clearPostFields() {
+    postDataNotifier.value = {
+      'postTitle': '', // Reset post title
+      'postDescription': '', // Reset post description
+      'selectedImageUrl': null, // Reset category image
+      'selectedTitle': null, // Reset category title
+    };
   }
 
   @override
@@ -49,9 +70,13 @@ class _HomeScreenState extends State<HomeScreen> {
         onTap: (index) {
           // Clear the post title controller on tab change (except Post tab)
           if (index != 1) {
+            _clearPostFields();
             postNav.currentState?.popUntil((r) => r.isFirst);
-            _postTitleController
-                .clear(); // Clear text field only when switching away from Post
+            // _postTitleController.clear();
+            // _postDescriptionController
+            //     .clear(); // Clear text field only when switching away from Post
+            // Reset the category selection when switching away from Post tab
+            //postNav.currentState?.resetCategorySelection();
           }
           // scribbleNav.currentState!.popUntil((r) => r.isFirst);
           // reelNav.currentState!.popUntil((r) => r.isFirst);
@@ -129,7 +154,10 @@ class _HomeScreenState extends State<HomeScreen> {
               builder: (context) {
                 return CupertinoPageScaffold(
                   child: PostDiscussionScreen(
-                    postTitleController: _postTitleController,
+                    // key: postNav,
+                    // postTitleController: _postTitleController,
+                    // postDescriptionController: _postDescriptionController,
+                    postDataNotifier: postDataNotifier,
                     toggleBottomNavBarVisibility: _toggleBottomNavBarVisibility,
                   ),
                 );

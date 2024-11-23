@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:grooot_fi_app/screens/post_discussion_screen.dart';
-import 'package:grooot_fi_app/screens/post_discussion_screen1.dart';
 import 'package:grooot_fi_app/screens/profile_screen.dart';
 import 'package:grooot_fi_app/screens/scribble_screen.dart';
 

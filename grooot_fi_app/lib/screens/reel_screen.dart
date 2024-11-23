@@ -12,9 +12,9 @@ class _ReelScreenState extends State<ReelScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Reel feed Page'),
+        title: const Text('Reel feed Page'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('Reel feed Page Content'),
       ),
     );

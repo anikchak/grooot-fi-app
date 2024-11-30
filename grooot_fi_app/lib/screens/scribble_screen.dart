@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:grooot_fi_app/datamodels/feed_data_model.dart';
+import '../services/feed_service.dart';
 
 class ScribbleScreen extends StatefulWidget {
   const ScribbleScreen({super.key});
@@ -9,25 +12,78 @@ class ScribbleScreen extends StatefulWidget {
 }
 
 class _ScribbleScreenState extends State<ScribbleScreen> {
+  final FeedService feedService = FeedService();
+  List<Feed> feeds = [];
   Map<int, bool> expandedStates =
       {}; // Track expanded states for each container
-  String description =
-      //"This is a long description text that should demonstrate the 'show more' and 'show less' functionality. "
-      //"It will truncate to 7 lines if not expanded, and upon clicking 'show more', it will reveal the full text."
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum";
+
+  bool isLoading = true;
+  int offset = 0;
+  int limit = 20;
+  bool hasMore = true;
+  bool isLoadingMore = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchFeeds(); // Fetch feeds when the screen initializes
+  }
+
+  Future<void> _fetchFeeds({bool isRefresh = false}) async {
+    if (isRefresh) {
+      offset = 0;
+      hasMore = true;
+    }
+    if (!hasMore || isLoadingMore) return;
+
+    setState(() {
+      isLoadingMore = true;
+    });
+
+    try {
+      final feedData = await feedService.fetchFeeds(offset: offset);
+      setState(() {
+        if (isRefresh) {
+          feeds = feedData.data; // Replace data on refresh
+        } else {
+          feeds.addAll(feedData.data); // Append data for pagination
+        }
+        offset += feedData.data.length;
+        if (feedData.data.length < limit) hasMore = false; // No more data
+      });
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error fetching feeds: $error')),
+      );
+    } finally {
+      setState(() {
+        isLoadingMore = false;
+        isLoading = false;
+      });
+    }
+  }
+
+  bool _shouldShowMore(String? text, BuildContext context) {
+    if (text == null || text.isEmpty) return false;
+
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: text,
+        style: GoogleFonts.roboto(
+          textStyle: const TextStyle(fontSize: 14),
+        ),
+      ),
+      maxLines: 7,
+      textDirection: TextDirection.ltr,
+    )..layout(
+        maxWidth:
+            MediaQuery.of(context).size.width - 32); // Subtract padding/margins
+
+    return textPainter.didExceedMaxLines;
+  }
 
   @override
   Widget build(BuildContext context) {
-    Future<void> refreshFeedContent() async {
-      // Simulate some network or data refresh delay
-      await Future.delayed(const Duration(seconds: 2));
-
-      // After refreshing, you can update the UI or data
-      setState(() {
-        // Update any state or data here if needed
-      });
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -40,12 +96,11 @@ class _ScribbleScreenState extends State<ScribbleScreen> {
           Padding(
             padding: const EdgeInsets.fromLTRB(0, 0, 16.0, 8.0),
             child: GestureDetector(
-              onTap: () {
-                // Action for the Post button
-              },
+              onTap: () {},
               child: const Icon(
                 Icons.add_rounded,
                 size: 35,
+                color: Colors.white,
               ),
             ),
           ),
@@ -59,141 +114,210 @@ class _ScribbleScreenState extends State<ScribbleScreen> {
         ),
         toolbarHeight: 50,
       ),
-      body: RefreshIndicator(
-        onRefresh: refreshFeedContent,
-        child: ListView.builder(
-          itemCount: 20,
-          itemBuilder: (context, index) {
-            bool isExpanded = expandedStates[index] ?? false;
-            return Container(
-              margin: const EdgeInsets.all(8.0),
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: Colors.blueAccent.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(10.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    spreadRadius: 2,
-                    blurRadius: 5,
-                    offset: const Offset(0, 3), // changes position of shadow
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const CircleAvatar(
-                        radius: 30, // Adjust size as needed
-                        backgroundImage: AssetImage(
-                            'assets/images/avatar.png'), // Provide your image path
-                      ),
-                      const SizedBox(
-                          width: 16), // Spacing between image and text
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : RefreshIndicator(
+              onRefresh: () => _fetchFeeds(isRefresh: true),
+              child: ListView.builder(
+                itemCount: feeds.length + (hasMore ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index < feeds.length) {
+                    final feed = feeds[index];
+                    bool isExpanded = expandedStates[index] ?? false;
+
+                    return Container(
+                      margin: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Text(
-                            'Taxation',
-                            style: GoogleFonts.roboto(
-                              textStyle: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFFCDEB3F),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            'posted by anikchak',
-                            style: GoogleFonts.roboto(
-                                textStyle: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.white,
-                            )),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'I made 1cr+ this year, how do I save some tax on this amount?',
-                        style: GoogleFonts.roboto(
-                          textStyle: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            expandedStates[index] =
-                                !(expandedStates[index] ?? false);
-                          });
-                        },
-                        child: RichText(
-                          text: TextSpan(
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TextSpan(
-                                text: isExpanded
-                                    ? description
-                                    : '${description.split(' ').take(50) // Approximation to fit 7 lines
-                                        .join(' ')}...',
+                              CircleAvatar(
+                                radius: 25,
+                                backgroundImage: feed.categoryAvatar != null
+                                    ? NetworkImage(feed.categoryAvatar!)
+                                    : const AssetImage(
+                                            'assets/images/avatar.png')
+                                        as ImageProvider,
+                              ),
+                              const SizedBox(width: 16),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    feed.category ?? 'Category',
+                                    style: GoogleFonts.roboto(
+                                      textStyle: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFFCDEB3F),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    'posted by ${feed.createdBy ?? 'Unknown'}',
+                                    style: GoogleFonts.roboto(
+                                      textStyle: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                feed.postTitle ?? 'Post title missing',
                                 style: GoogleFonts.roboto(
                                   textStyle: const TextStyle(
-                                    fontSize: 14,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
                                     color: Colors.white,
                                   ),
                                 ),
                               ),
-                              if (!isExpanded)
-                                TextSpan(
-                                  text: ' show more',
+                              const SizedBox(height: 8),
+                              if (_shouldShowMore(
+                                  feed.postDescription, context))
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      expandedStates[index] = !isExpanded;
+                                    });
+                                  },
+                                  child: RichText(
+                                    text: TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: isExpanded
+                                              ? feed.postDescription ??
+                                                  'Post description missing'
+                                              : '${feed.postDescription?.split(' ').take(50).join(' ')}...',
+                                          style: GoogleFonts.roboto(
+                                            textStyle: const TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: isExpanded
+                                              ? ' show less'
+                                              : ' show more',
+                                          style: GoogleFonts.roboto(
+                                            textStyle: const TextStyle(
+                                              fontSize: 14,
+                                              color: Color(0xFFCDEB3F),
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              else
+                                Text(
+                                  feed.postDescription ?? '',
                                   style: GoogleFonts.roboto(
                                     textStyle: const TextStyle(
                                       fontSize: 14,
-                                      color: Color(
-                                          0xFFCDEB3F), // Use any color you prefer
+                                      color: Colors.white,
                                     ),
                                   ),
                                 ),
                             ],
                           ),
-                        ),
-                      ),
-                      if (isExpanded)
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              expandedStates[index] = false;
-                            });
-                          },
-                          child: const Text(
-                            "show less",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Color(0xFFCDEB3F),
-                            ),
+                          const SizedBox(height: 16),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    (feed.upvotesCount ?? 0) + 1;
+                                  });
+                                },
+                                child: Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      'images/upvote_outlined.svg',
+                                      height: 20,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      (feed.upvotesCount ?? 0) == 0
+                                          ? 'Upvote'
+                                          : '${feed.upvotesCount}',
+                                      style: GoogleFonts.roboto(
+                                        textStyle: const TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 25),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    (feed.commentCount ?? 0) + 1;
+                                  });
+                                },
+                                child: Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.sms_outlined,
+                                      color: Colors.white,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      (feed.commentCount ?? 0) == 0
+                                          ? 'Comment'
+                                          : '${feed.commentCount}',
+                                      style: GoogleFonts.roboto(
+                                        textStyle: const TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                    ],
-                  ),
-                ],
+                          const SizedBox(height: 16),
+                          const Divider(
+                            color: Colors.white,
+                            thickness: 1.0,
+                            height: 1.0,
+                          ),
+                        ],
+                      ),
+                    );
+                  } else {
+                    // Show loading indicator for "Load More"
+                    return const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  }
+                },
               ),
-            );
-          },
-        ),
-      ),
+            ),
     );
   }
 }

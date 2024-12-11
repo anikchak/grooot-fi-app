@@ -40,6 +40,7 @@ class Feed {
     this.upvotesCount,
     this.commentCount,
     this.postCreatedTimestamp,
+    this.isUpvoted = false,
   });
 
   final String? postId;
@@ -50,9 +51,10 @@ class Feed {
   final bool? isAnonymous;
   final String? postTitle;
   final String? postDescription;
-  final int? upvotesCount;
+  int? upvotesCount;
   final int? commentCount;
   final int? postCreatedTimestamp;
+  bool isUpvoted;
 
   factory Feed.fromJson(Map<String, dynamic> json) {
     return Feed(
@@ -67,6 +69,7 @@ class Feed {
       upvotesCount: json["upvotesCount"],
       commentCount: json["commentCount"],
       postCreatedTimestamp: json["postCreatedTimestamp"],
+      isUpvoted: json["isUpvoted"] ?? false,
     );
   }
 
@@ -82,5 +85,6 @@ class Feed {
         "upvotesCount": upvotesCount,
         "commentCount": commentCount,
         "postCreatedTimestamp": postCreatedTimestamp,
+        "isUpvoted": isUpvoted,
       };
 }

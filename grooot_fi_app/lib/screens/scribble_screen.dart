@@ -202,7 +202,7 @@ class _ScribbleScreenState extends State<ScribbleScreen> {
                                           text: isExpanded
                                               ? feed.postDescription ??
                                                   'Post description missing'
-                                              : '${feed.postDescription?.split(' ').take(50).join(' ')}...',
+                                              : '${feed.postDescription?.split(' ').take(50).join(' ')}',
                                           style: GoogleFonts.roboto(
                                             textStyle: const TextStyle(
                                               fontSize: 14,
@@ -212,8 +212,8 @@ class _ScribbleScreenState extends State<ScribbleScreen> {
                                         ),
                                         TextSpan(
                                           text: isExpanded
-                                              ? ' show less'
-                                              : ' show more',
+                                              ? ' ...show less'
+                                              : ' ...show more',
                                           style: GoogleFonts.roboto(
                                             textStyle: const TextStyle(
                                               fontSize: 14,
@@ -245,13 +245,25 @@ class _ScribbleScreenState extends State<ScribbleScreen> {
                               GestureDetector(
                                 onTap: () {
                                   setState(() {
-                                    (feed.upvotesCount ?? 0) + 1;
+                                    if (feed.isUpvoted) {
+                                      // Decrement upvotes and unmark as upvoted
+                                      feed.upvotesCount =
+                                          (feed.upvotesCount ?? 0) - 1;
+                                      feed.isUpvoted = false;
+                                    } else {
+                                      // Increment upvotes and mark as upvoted
+                                      feed.upvotesCount =
+                                          (feed.upvotesCount ?? 0) + 1;
+                                      feed.isUpvoted = true;
+                                    }
                                   });
                                 },
                                 child: Row(
                                   children: [
                                     SvgPicture.asset(
-                                      'images/upvote_outlined.svg',
+                                      feed.isUpvoted
+                                          ? 'images/upvote_filled.svg'
+                                          : 'images/upvote_outlined.svg',
                                       height: 20,
                                     ),
                                     const SizedBox(width: 8),

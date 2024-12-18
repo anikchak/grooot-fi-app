@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:grooot_fi_app/components/comments_bottom_sheet.dart';
 import 'package:grooot_fi_app/datamodels/feed_data_model.dart';
 import '../services/feed_service.dart';
 
 class ScribbleScreen extends StatefulWidget {
-  const ScribbleScreen({super.key});
+  final Function(bool) toggleBottomNavBarVisibility;
+  const ScribbleScreen({super.key, required this.toggleBottomNavBarVisibility});
 
   @override
   State<ScribbleScreen> createState() => _ScribbleScreenState();
@@ -82,6 +84,30 @@ class _ScribbleScreenState extends State<ScribbleScreen> {
     return textPainter.didExceedMaxLines;
   }
 
+  void _showCommentsModal(BuildContext context, String postId) {
+    widget.toggleBottomNavBarVisibility(false);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      barrierColor: const Color(0xFF2C2C2C).withOpacity(0.9),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return CommentsBottomSheet(
+          commentsFuture: feedService.fetchComments(postId),
+          onCommentAdded: () {
+            // Add logic to handle adding a new comment
+            print('New comment added!');
+          },
+        );
+      },
+    ).whenComplete(() {
+      widget.toggleBottomNavBarVisibility(true);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,7 +142,9 @@ class _ScribbleScreenState extends State<ScribbleScreen> {
       ),
       body: isLoading
           ? const Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                color: Color(0xFFCDEB3F),
+              ),
             )
           : RefreshIndicator(
               onRefresh: () => _fetchFeeds(isRefresh: true),
@@ -284,9 +312,8 @@ class _ScribbleScreenState extends State<ScribbleScreen> {
                               const SizedBox(width: 25),
                               GestureDetector(
                                 onTap: () {
-                                  setState(() {
-                                    (feed.commentCount ?? 0) + 1;
-                                  });
+                                  _showCommentsModal(
+                                      context, feed.postId ?? '');
                                 },
                                 child: Row(
                                   children: [

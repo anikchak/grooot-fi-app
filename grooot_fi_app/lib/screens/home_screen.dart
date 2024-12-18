@@ -144,7 +144,10 @@ class _HomeScreenState extends State<HomeScreen> {
             return CupertinoTabView(
               navigatorKey: scribbleNav,
               builder: (context) {
-                return const CupertinoPageScaffold(child: ScribbleScreen());
+                return CupertinoPageScaffold(
+                    child: ScribbleScreen(
+                  toggleBottomNavBarVisibility: _toggleBottomNavBarVisibility,
+                ));
               },
             );
           case 1:
@@ -173,7 +176,10 @@ class _HomeScreenState extends State<HomeScreen> {
             return CupertinoTabView(
               navigatorKey: scribbleNav,
               builder: (context) {
-                return const CupertinoPageScaffold(child: ScribbleScreen());
+                return CupertinoPageScaffold(
+                    child: ScribbleScreen(
+                  toggleBottomNavBarVisibility: _toggleBottomNavBarVisibility,
+                ));
               },
             );
         }

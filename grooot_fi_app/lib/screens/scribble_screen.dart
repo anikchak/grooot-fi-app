@@ -317,10 +317,15 @@ class _ScribbleScreenState extends State<ScribbleScreen> {
                                 },
                                 child: Row(
                                   children: [
-                                    const Icon(
-                                      Icons.sms_outlined,
-                                      color: Colors.white,
-                                    ),
+                                    feed.isCommented
+                                        ? Icon(
+                                            Icons.sms_rounded,
+                                            color: Color(0xFFCDEB3F),
+                                          )
+                                        : Icon(
+                                            Icons.sms_outlined,
+                                            color: Colors.white,
+                                          ),
                                     const SizedBox(width: 8),
                                     Text(
                                       (feed.commentCount ?? 0) == 0

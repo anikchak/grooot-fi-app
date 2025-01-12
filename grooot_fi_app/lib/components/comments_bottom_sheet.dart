@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class CommentsBottomSheet extends StatefulWidget {
   final Future<List<String>> commentsFuture; // Fetch comments dynamically

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:grooot_fi_app/datamodels/post_comment_data_model.dart';
 import 'package:http/http.dart' as http;
 import '../datamodels/feed_data_model.dart';
 import 'package:grooot_fi_app/routes/routes.dart';
@@ -21,20 +22,21 @@ class FeedService {
     }
   }
 
-  Future<List<String>> fetchComments(String postId) async {
-    // final String url = 'https://run.mocky.io/v3/comments_endpoint/$postId'; // Replace with actual endpoint
-    // try {
-    //   final response = await http.get(Uri.parse(url));
+  Future<PostCommentDataModel> fetchComments(String postId) async {
+    final String url =
+        Routes.fetchPostComments + postId; // Replace with actual endpoint
+    try {
+      final response = await http.get(Uri.parse(url));
 
-    //   if (response.statusCode == 200) {
-    //     final jsonData = json.decode(response.body);
-    //     return List<String>.from(jsonData["comments"] ?? []); // Parse comments from response
-    //   } else {
-    //     throw Exception('Failed to fetch comments: ${response.statusCode}');
-    //   }
-    // } catch (error) {
-    //   throw Exception('Error fetching comments: $error');
-    // }
-    return [];
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        return PostCommentDataModel.fromJson(
+            jsonData); // Parse comments from response
+      } else {
+        throw Exception('Failed to fetch comments: ${response.statusCode}');
+      }
+    } catch (error) {
+      throw Exception('Error fetching comments: $error');
+    }
   }
 }

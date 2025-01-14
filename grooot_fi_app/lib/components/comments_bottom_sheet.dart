@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:grooot_fi_app/datamodels/post_comment_data_model.dart';
 
 class CommentsBottomSheet extends StatefulWidget {
-  final Future<List<String>> commentsFuture; // Fetch comments dynamically
+  final Future<PostCommentDataModel>
+      commentsFuture; // Fetch comments dynamically
   final VoidCallback onCommentAdded; // Callback for adding new comments
 
   const CommentsBottomSheet({
@@ -17,7 +20,7 @@ class CommentsBottomSheet extends StatefulWidget {
 class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
   final TextEditingController commentController = TextEditingController();
   final FocusNode commentFocusNode = FocusNode();
-  late Future<List<String>> cachedFuture;
+  late Future<PostCommentDataModel> cachedFuture;
 
   @override
   void initState() {
@@ -34,7 +37,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<String>>(
+    return FutureBuilder<PostCommentDataModel>(
       future: cachedFuture,
       builder: (context, commentData) {
         if (commentData.connectionState == ConnectionState.waiting) {
@@ -50,7 +53,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
             ),
           );
         } else {
-          final comments = commentData.data ?? [];
+          final comments = commentData.data?.data ?? [];
 
           return GestureDetector(
             // Dismiss the keyboard when tapping outside the input box
@@ -70,15 +73,20 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        "Comments here",
-                        style: TextStyle(
+                      Text(
+                        "Comments",
+                        style: GoogleFonts.roboto(
+                            textStyle: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                        ),
+                          color: Colors.black,
+                        )),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.close),
+                        icon: const Icon(
+                          Icons.close,
+                          color: Colors.black,
+                        ),
                         onPressed: () => Navigator.of(context).pop(),
                       ),
                     ],
@@ -112,7 +120,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                                       ),
                                     ),
                                     Text(
-                                      comments[index],
+                                      comments[index].comment,
                                       style: const TextStyle(fontSize: 14),
                                     ),
                                   ],
@@ -138,6 +146,11 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                           },
                           decoration: InputDecoration(
                             hintText: "Add a comment...",
+                            hintStyle: GoogleFonts.roboto(
+                              textStyle: TextStyle(
+                                color: Colors.black54,
+                              ),
+                            ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),

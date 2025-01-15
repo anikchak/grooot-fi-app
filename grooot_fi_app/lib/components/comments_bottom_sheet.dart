@@ -101,6 +101,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const CircleAvatar(
                                 radius: 20,
@@ -113,15 +114,23 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "User ${index + 1}",
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
+                                      comments[index].commentByUser,
+                                      style: GoogleFonts.roboto(
+                                        textStyle: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                        ),
                                       ),
                                     ),
                                     Text(
                                       comments[index].comment,
-                                      style: const TextStyle(fontSize: 14),
+                                      style: GoogleFonts.roboto(
+                                        textStyle: const TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.black,
+                                        ),
+                                      ),
                                     ),
                                   ],
                                 ),

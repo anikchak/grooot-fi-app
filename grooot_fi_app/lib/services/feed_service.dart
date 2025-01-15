@@ -23,8 +23,9 @@ class FeedService {
   }
 
   Future<PostCommentDataModel> fetchComments(String postId) async {
+    //final String url = Routes.fetchPostComments + postId; // Replace with actual endpoint
     final String url =
-        Routes.fetchPostComments + postId; // Replace with actual endpoint
+        Routes.fetchPostComments; //This is dummy url. should be removed
     try {
       final response = await http.get(Uri.parse(url));
 

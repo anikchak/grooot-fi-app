@@ -36,17 +36,17 @@ class PostCommentDataModel {
 }
 
 class PostComment {
-  final String postId;
-  final String commenId;
-  final String commentByUserAvatar;
-  final String commentByUser;
+  final String? postId;
+  final String? commenId;
+  final String? commentByUserAvatar;
+  final String? commentByUser;
   final String comment;
 
   PostComment({
-    required this.postId,
-    required this.commenId,
-    required this.commentByUserAvatar,
-    required this.commentByUser,
+    this.postId,
+    this.commenId,
+    this.commentByUserAvatar,
+    this.commentByUser,
     required this.comment,
   });
 

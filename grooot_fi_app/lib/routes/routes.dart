@@ -1,6 +1,6 @@
 class Routes {
   static const String fetchFeed =
-      "https://run.mocky.io/v3/3ab56bee-f9e6-4c8d-8ec4-6afea1dadb35";
+      "https://run.mocky.io/v3/afec10f5-30a1-4833-baff-f33aefc4a7b6";
   static const String fetchPostComments =
-      "https://run.mocky.io/v3/64633ed9-2847-4919-ae9d-b368a4cb159f";
+      "https://run.mocky.io/v3/d7fb8056-c990-4c15-9be8-c096d8e6c2ca";
 }

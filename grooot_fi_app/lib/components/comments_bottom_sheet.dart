@@ -18,10 +18,10 @@ class CommentsBottomSheet extends StatefulWidget {
 }
 
 class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
-  final TextEditingController commentController = TextEditingController();
+  final TextEditingController _commentController = TextEditingController();
   final FocusNode commentFocusNode = FocusNode();
   late Future<PostCommentDataModel> cachedFuture;
-
+  List<PostComment> comments = [];
   @override
   void initState() {
     super.initState();
@@ -30,9 +30,27 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
 
   @override
   void dispose() {
-    commentController.dispose();
+    _commentController.dispose();
     commentFocusNode.dispose();
     super.dispose();
+  }
+
+  Future<void> _addComment(String commentText) async {
+    print("Adding comment: $commentText");
+    final newComment = PostComment(
+      commentByUser: "Current User", // Replace with actual username
+      comment: commentText,
+    );
+
+    // Simulate saving to backend and updating local state
+    setState(() {
+      comments.add(newComment); // Add the new comment to the list
+    });
+
+    // Optionally call backend here to save the comment
+    // await yourBackendService.saveComment(newComment);
+
+    widget.onCommentAdded(); // Notify parent about the addition
   }
 
   @override
@@ -53,7 +71,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
             ),
           );
         } else {
-          final comments = commentData.data?.data ?? [];
+          comments = commentData.data?.data ?? [];
 
           return GestureDetector(
             // Dismiss the keyboard when tapping outside the input box
@@ -114,7 +132,8 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      comments[index].commentByUser,
+                                      comments[index].commentByUser ??
+                                          'Anonymous',
                                       style: GoogleFonts.roboto(
                                         textStyle: const TextStyle(
                                           fontSize: 16,
@@ -147,12 +166,16 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                     children: [
                       Expanded(
                         child: TextField(
-                          controller: commentController,
+                          controller: _commentController,
                           focusNode: commentFocusNode,
                           onTap: () {
                             // When tapped, ensure the keyboard opens
                             commentFocusNode.requestFocus();
                           },
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 14,
+                          ),
                           decoration: InputDecoration(
                             hintText: "Add a comment...",
                             hintStyle: GoogleFonts.roboto(
@@ -170,9 +193,9 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                       IconButton(
                         icon: const Icon(Icons.send, color: Colors.blue),
                         onPressed: () {
-                          if (commentController.text.isNotEmpty) {
-                            widget.onCommentAdded();
-                            commentController.clear(); // Clear the input
+                          _addComment(_commentController.text);
+                          if (_commentController.text.isNotEmpty) {
+                            _commentController.clear(); // Clear the input
                             commentFocusNode.unfocus(); // Dismiss the keyboard
                           }
                         },

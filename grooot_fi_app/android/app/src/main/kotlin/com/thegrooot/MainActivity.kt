@@ -1,4 +1,4 @@
-package com.example.grooot_fi_app
+package com.thegrooot
 
 import io.flutter.embedding.android.FlutterActivity
 

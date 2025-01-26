@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Grooot</string>
+    <string name="facebook_app_id">1393095141676227</string>
+    <string name="facebook_client_token">0f5acae613927980c9bfac3b003d53a4</string>
+    <string name="fb_login_protocol_scheme">fb1393095141676227</string>
+</resources>
